@@ -13,7 +13,7 @@ export default function ComparativeAnalysis({ highlighted }) {
     null;
 
   return (
-    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 h-full">
+    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 h-full mt-40">
       <h3 className="text-white text-lg font-semibold mb-4">📊 Performance Insights</h3>
       
       <div className="space-y-6">

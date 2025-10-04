@@ -18,7 +18,7 @@ export default function VaccinationInsights({ highlighted }) {
   const highlightedState = highlighted ? vaccinationData[highlighted] : null;
 
   return (
-    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 h-full">
+    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 h-full mt-40">
       <h3 className="text-white text-lg font-semibold mb-4">💡 Key Insights</h3>
       
       <div className="space-y-4">
@@ -32,7 +32,6 @@ export default function VaccinationInsights({ highlighted }) {
         </div>
 
         {/* Performance Extremes */}
-        <div className="grid grid-cols-2 gap-3">
           <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 p-3 rounded-lg border border-green-400/30">
             <div className="text-green-300 text-xs font-semibold">Highest</div>
             <div className="text-white font-bold text-sm truncate" title={topState.name}>
@@ -42,7 +41,7 @@ export default function VaccinationInsights({ highlighted }) {
               {new Intl.NumberFormat().format(topState.overall)}
             </div>
           </div>
-          
+
           <div className="bg-gradient-to-r from-red-500/20 to-orange-500/20 p-3 rounded-lg border border-red-400/30">
             <div className="text-red-300 text-xs font-semibold">Lowest</div>
             <div className="text-white font-bold text-sm truncate" title={bottomState.name}>
@@ -52,7 +51,6 @@ export default function VaccinationInsights({ highlighted }) {
               {new Intl.NumberFormat().format(bottomState.overall)}
             </div>
           </div>
-        </div>
 
         {/* Coverage Distribution */}
         <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 p-3 rounded-lg border border-purple-400/30">

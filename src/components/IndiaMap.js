@@ -1,10 +1,11 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import vaccinationData from "../data/vaccinationData";
 
 export default function IndiaMap({ highlighted, setHighlighted }) {
   const [svgContent, setSvgContent] = useState("");
+  const [selectedState, setSelectedState] = useState(null);
   const [tooltip, setTooltip] = useState({ 
     visible: false, 
     x: 0, 
@@ -13,12 +14,27 @@ export default function IndiaMap({ highlighted, setHighlighted }) {
     stateName: "",
     data: null 
   });
+  const mapRef = useRef(null);
 
   useEffect(() => {
     fetch("/india.svg")
       .then((res) => res.text())
       .then((svg) => setSvgContent(svg));
   }, []);
+
+  // Close selection when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (mapRef.current && !mapRef.current.contains(event.target)) {
+        setSelectedState(null);
+        setHighlighted(null);
+        setTooltip({ visible: false, x: 0, y: 0, stateId: null, stateName: "", data: null });
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [setHighlighted]);
 
   if (!svgContent) return (
     <div className="flex items-center justify-center h-96">
@@ -43,7 +59,7 @@ export default function IndiaMap({ highlighted, setHighlighted }) {
   };
 
   const handleMouseMove = (e) => {
-    if (e.target.id && vaccinationData[e.target.id]) {
+    if (e.target.id && vaccinationData[e.target.id] && !selectedState) {
       const stateData = vaccinationData[e.target.id];
       setHighlighted(e.target.id);
       
@@ -60,18 +76,56 @@ export default function IndiaMap({ highlighted, setHighlighted }) {
   };
 
   const handleMouseLeave = () => {
-    setHighlighted(null);
-    setTooltip({ visible: false, x: 0, y: 0, stateId: null, stateName: "", data: null });
+    if (!selectedState) {
+      setHighlighted(null);
+      setTooltip({ visible: false, x: 0, y: 0, stateId: null, stateName: "", data: null });
+    }
+  };
+
+  const handleStateClick = (stateId) => {
+    if (selectedState === stateId) {
+      // Clicking the same state again deselects it
+      setSelectedState(null);
+      setHighlighted(null);
+      setTooltip({ visible: false, x: 0, y: 0, stateId: null, stateName: "", data: null });
+    } else {
+      // Select new state
+      const stateData = vaccinationData[stateId];
+      setSelectedState(stateId);
+      setHighlighted(stateId);
+      setTooltip({ 
+        visible: true, 
+        x: 0, 
+        y: 0, 
+        stateId: stateId,
+        stateName: stateData.name,
+        data: stateData 
+      });
+    }
   };
 
   // Update SVG paths with enhanced styling
   let updatedSvg = svgContent;
   Object.entries(vaccinationData).forEach(([id, d]) => {
+    const isSelected = selectedState === id;
     const isHighlighted = highlighted === id;
     const fill = getColor(d.overall);
-    const stroke = isHighlighted ? "#1e40af" : "#ffffff";
-    const strokeWidth = isHighlighted ? "2" : "1";
-    const filter = isHighlighted ? "url(#glow)" : "none";
+    
+    let stroke, strokeWidth, filter;
+    
+    if (isSelected) {
+      stroke = "#1e40af";
+      strokeWidth = "3";
+      filter = "url(#glow)";
+    } else if (isHighlighted && !selectedState) {
+      stroke = "#1e40af";
+      strokeWidth = "2";
+      filter = "url(#glow)";
+    } else {
+      stroke = "#ffffff";
+      strokeWidth = "1";
+      filter = "none";
+    }
     
     updatedSvg = updatedSvg.replace(
       new RegExp(`id="${id}"`, "g"),
@@ -138,17 +192,94 @@ export default function IndiaMap({ highlighted, setHighlighted }) {
   };
 
   return (
-    <div className="relative w-full flex justify-center">
+    <div ref={mapRef} className="relative w-full flex justify-center">
       <div
-        className="w-full max-w-4xl" // Increased max width
+        className="w-full max-w-5xl"
         dangerouslySetInnerHTML={{ __html: updatedSvg }}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
+        onClick={(e) => {
+          if (e.target.id && vaccinationData[e.target.id]) {
+            handleStateClick(e.target.id);
+          }
+        }}
         style={{ minHeight: '400px' }}
       />
 
-      {/* Enhanced Tooltip with Pie Chart */}
-      {tooltip.visible && tooltip.data && (
+      {/* Persistent Tooltip for Selected State */}
+      {selectedState && tooltip.data && (
+        <div className="absolute top-4 right-4 bg-slate-800/95 backdrop-blur-md shadow-2xl rounded-2xl p-5 w-80 z-50 border border-white/20 animate-fade-in">
+          <div className="flex justify-between items-start mb-3">
+            <h3 className="font-bold text-xl text-white">{tooltip.stateName}</h3>
+            <button
+              onClick={() => {
+                setSelectedState(null);
+                setHighlighted(null);
+                setTooltip({ visible: false, x: 0, y: 0, stateId: null, stateName: "", data: null });
+              }}
+              className="text-gray-400 hover:text-white text-lg"
+            >
+              ×
+            </button>
+          </div>
+          
+          {/* Pie Chart */}
+          <div className="mb-4">
+            <StatePieChart data={tooltip.data} />
+          </div>
+          
+          {/* Stats Grid */}
+          <div className="grid grid-cols-2 gap-3 text-sm">
+            <div className="bg-blue-500/20 p-3 rounded-xl border border-blue-400/30">
+              <div className="text-blue-300 font-semibold text-xs uppercase tracking-wide">Total</div>
+              <div className="text-white font-bold text-lg mt-1">
+                {new Intl.NumberFormat().format(tooltip.data.overall)}
+              </div>
+            </div>
+            
+            <div className="bg-green-500/20 p-3 rounded-xl border border-green-400/30">
+              <div className="text-green-300 font-semibold text-xs uppercase tracking-wide">Fully</div>
+              <div className="text-white font-bold text-lg mt-1">
+                {new Intl.NumberFormat().format(tooltip.data.total)}
+              </div>
+            </div>
+            
+            <div className="bg-yellow-500/20 p-3 rounded-xl border border-yellow-400/30">
+              <div className="text-yellow-300 font-semibold text-xs uppercase tracking-wide">Partial</div>
+              <div className="text-white font-bold text-lg mt-1">
+                {new Intl.NumberFormat().format(tooltip.data.partial)}
+              </div>
+            </div>
+            
+            <div className="bg-purple-500/20 p-3 rounded-xl border border-purple-400/30">
+              <div className="text-purple-300 font-semibold text-xs uppercase tracking-wide">Precaution</div>
+              <div className="text-white font-bold text-lg mt-1">
+                {new Intl.NumberFormat().format(tooltip.data.precaution)}
+              </div>
+            </div>
+          </div>
+          
+          {/* Pie Chart Legend */}
+          <div className="flex justify-center space-x-4 mt-3 pt-3 border-t border-white/20">
+            {['Fully', 'Partial', 'Precaution'].map((label, index) => (
+              <div key={label} className="flex items-center space-x-1">
+                <div 
+                  className="w-3 h-3 rounded-full" 
+                  style={{ backgroundColor: PIE_COLORS[index] }}
+                ></div>
+                <span className="text-xs text-gray-300">{label}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center text-xs text-gray-400 mt-3">
+            Click anywhere outside to close
+          </div>
+        </div>
+      )}
+
+      {/* Hover Tooltip (only when no state is selected) */}
+      {!selectedState && tooltip.visible && tooltip.data && (
         <div
           className="absolute bg-slate-800/95 backdrop-blur-md shadow-2xl rounded-2xl p-5 w-80 z-50 pointer-events-none border border-white/20 animate-fade-in"
           style={{ 
@@ -209,7 +340,9 @@ export default function IndiaMap({ highlighted, setHighlighted }) {
             ))}
           </div>
           
-          <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-slate-800 rotate-45 border-t border-l border-white/20"></div>
+          <div className="text-center text-xs text-gray-400 mt-3">
+            Click to select state
+          </div>
         </div>
       )}
     </div>

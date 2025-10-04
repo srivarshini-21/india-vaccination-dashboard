@@ -5,6 +5,7 @@ import VaccinationChart from "../components/VaccinationChart";
 import Legend from "../components/Legend";
 import VaccinationInsights from "../components/VaccinationInsights";
 import ComparativeAnalysis from "../components/ComparativeAnalysis";
+
 export default function Dashboard() {
   const [highlighted, setHighlighted] = useState(null);
 
@@ -22,57 +23,59 @@ export default function Dashboard() {
       <div className="relative z-10">
         {/* Header */}
         <div className="text-center pt-8 pb-6 px-4">
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 via-green-400 to-cyan-400 bg-clip-text text-transparent mb-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 via-green-400 to-cyan-400 bg-clip-text text-transparent mb-4">
             India Vaccination Dashboard
           </h1>
-          <p className="text-lg text-gray-300 max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg text-gray-300 max-w-3xl mx-auto">
             Interactive visualization of COVID-19 vaccination coverage across Indian states
           </p>
         </div>
 
         {/* Main Content */}
-        <div className="max-w-[95vw] mx-auto px-2 pb-8">
-          {/* Top Section: Map with Side Panels - Full Width */}
-          <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 mb-6">
-            {/* Left Panels Stack - 2 columns - STICKY */}
-            <div className="xl:col-span-2 space-y-4">
-              {/* Insights Panel */}
+        <div className="max-w-[95vw] mx-auto px-4 sm:px-6 md:px-8 pb-8">
+          {/* Top Section: Map with Side Panels */}
+          <div className="grid grid-cols-1 md:grid-cols-6 xl:grid-cols-12 gap-4 mb-6">
+            {/* Left Panels - Hidden on small screens */}
+            <div className="hidden md:block md:col-span-2 xl:col-span-2 space-y-4">
               <div className="sticky top-4">
                 <VaccinationInsights highlighted={highlighted} />
               </div>
-              
-              {/* Performance Panel */}
-              <div className="sticky top-[calc(100vh-500px)]"> {/* Adjust this value based on your content height */}
+              <div className="sticky top-[calc(100vh-500px)]">
                 <ComparativeAnalysis highlighted={highlighted} />
               </div>
             </div>
 
-            {/* Center Map - 8 columns (much wider) */}
-            <div className="xl:col-span-10"> {/* Changed from 8 to 10 to take more space */}
+            {/* Center Map */}
+            <div className="col-span-1 md:col-span-4 xl:col-span-10">
               <div className="bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl p-4 border border-white/20">
                 <div className="text-center mb-4">
-                  <h2 className="text-2xl font-bold text-white mb-2">Interactive State Map</h2>
-                  <p className="text-gray-300 text-sm">
+                  <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">Interactive State Map</h2>
+                  <p className="text-sm sm:text-base text-gray-300">
                     Hover over any state to view detailed vaccination data
                   </p>
                 </div>
-                
-                {/* Map Container - Full width with proper aspect ratio */}
-                <div className="flex justify-center items-center min-h-[600px]">
-                  <div className="w-full max-w-5xl"> {/* Increased max width */}
+
+                <div className="flex justify-center items-center min-h-[300px] sm:min-h-[500px] xl:min-h-[600px]">
+                  <div className="w-full max-w-3xl sm:max-w-4xl xl:max-w-5xl">
                     <IndiaMap highlighted={highlighted} setHighlighted={setHighlighted} />
                   </div>
                 </div>
-                
-                <div className="flex justify-center mt-4">
+
+                <div className="flex justify-center mt-4 overflow-x-auto">
                   <Legend />
                 </div>
               </div>
             </div>
           </div>
 
+          {/* Mobile Panels - Shown only on small screens */}
+          <div className="block md:hidden space-y-4 mb-6">
+            <VaccinationInsights highlighted={highlighted} />
+            <ComparativeAnalysis highlighted={highlighted} />
+          </div>
+
           {/* Bottom Section: Chart */}
-          <div className="bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl p-6 border border-white/20">
+          <div className="bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl p-6 border border-white/20 overflow-x-auto">
             <VaccinationChart highlighted={highlighted} />
           </div>
         </div>

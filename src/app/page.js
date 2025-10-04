@@ -34,15 +34,21 @@ export default function Dashboard() {
         <div className="max-w-[95vw] mx-auto px-2 pb-8">
           {/* Top Section: Map with Side Panels - Full Width */}
           <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 mb-6">
-            {/* Left Insights Panel - 2 columns - STICKY */}
+            {/* Left Panels Stack - 2 columns - STICKY */}
             <div className="xl:col-span-2 space-y-4">
-              <div className="sticky top-4 space-y-4">
+              {/* Insights Panel */}
+              <div className="sticky top-4">
                 <VaccinationInsights highlighted={highlighted} />
+              </div>
+              
+              {/* Performance Panel */}
+              <div className="sticky top-[calc(100vh-500px)]"> {/* Adjust this value based on your content height */}
+                <ComparativeAnalysis highlighted={highlighted} />
               </div>
             </div>
 
             {/* Center Map - 8 columns (much wider) */}
-            <div className="xl:col-span-8">
+            <div className="xl:col-span-10"> {/* Changed from 8 to 10 to take more space */}
               <div className="bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl p-4 border border-white/20">
                 <div className="text-center mb-4">
                   <h2 className="text-2xl font-bold text-white mb-2">Interactive State Map</h2>
@@ -61,13 +67,6 @@ export default function Dashboard() {
                 <div className="flex justify-center mt-4">
                   <Legend />
                 </div>
-              </div>
-            </div>
-
-            {/* Right Performance Panel - 2 columns - STICKY */}
-            <div className="xl:col-span-2">
-              <div className="sticky top-4">
-                <ComparativeAnalysis highlighted={highlighted} />
               </div>
             </div>
           </div>

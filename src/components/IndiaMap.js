@@ -271,10 +271,6 @@ export default function IndiaMap({ highlighted, setHighlighted }) {
               </div>
             ))}
           </div>
-
-          <div className="text-center text-xs text-gray-400 mt-3">
-            Click anywhere outside to close
-          </div>
         </div>
       )}
 

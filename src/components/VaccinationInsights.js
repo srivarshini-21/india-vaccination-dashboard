@@ -18,7 +18,7 @@ export default function VaccinationInsights({ highlighted }) {
   const highlightedState = highlighted ? vaccinationData[highlighted] : null;
 
   return (
-    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 h-full mt-40">
+    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 h-full">
       <h3 className="text-white text-lg font-semibold mb-4">💡 Key Insights</h3>
       
       <div className="space-y-4">

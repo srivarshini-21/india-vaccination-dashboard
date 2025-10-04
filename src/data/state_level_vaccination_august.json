@@ -1,0 +1,261 @@
+[
+  {
+    "title": "Uttar Pradesh",
+    "partial_vaccinated": 176545482,
+    "totally_vaccinated": 167168096,
+    "Precaution Dose": 21047457,
+    "total": 364761035
+  },
+  {
+    "title": "Maharashtra",
+    "partial_vaccinated": 91441029,
+    "totally_vaccinated": 76029475,
+    "Precaution Dose": 7915161,
+    "total": 175385665
+  },
+  {
+    "title": "West Bengal",
+    "partial_vaccinated": 73414446,
+    "totally_vaccinated": 66315897,
+    "Precaution Dose": 13097302,
+    "total": 152827645
+  },
+  {
+    "title": "Bihar",
+    "partial_vaccinated": 72800784,
+    "totally_vaccinated": 65644545,
+    "Precaution Dose": 10675893,
+    "total": 149121222
+  },
+  {
+    "title": "Madhya Pradesh",
+    "partial_vaccinated": 60602259,
+    "totally_vaccinated": 58829056,
+    "Precaution Dose": 8766983,
+    "total": 128198298
+  },
+  {
+    "title": "Tamil Nadu",
+    "partial_vaccinated": 60738237,
+    "totally_vaccinated": 55742410,
+    "Precaution Dose": 5588085,
+    "total": 122068732
+  },
+  {
+    "title": "Gujarat",
+    "partial_vaccinated": 54325899,
+    "totally_vaccinated": 53776488,
+    "Precaution Dose": 13619766,
+    "total": 121722153
+  },
+  {
+    "title": "Karnataka",
+    "partial_vaccinated": 55094787,
+    "totally_vaccinated": 54972158,
+    "Precaution Dose": 8056417,
+    "total": 118123362
+  },
+  {
+    "title": "Rajasthan",
+    "partial_vaccinated": 56792311,
+    "totally_vaccinated": 50279600,
+    "Precaution Dose": 5317399,
+    "total": 112389310
+  },
+  {
+    "title": "Andhra Pradesh",
+    "partial_vaccinated": 44676948,
+    "totally_vaccinated": 47540132,
+    "Precaution Dose": 12301205,
+    "total": 104518285
+  },
+  {
+    "title": "Odisha",
+    "partial_vaccinated": 35108109,
+    "totally_vaccinated": 32546608,
+    "Precaution Dose": 6887377,
+    "total": 74542094
+  },
+  {
+    "title": "Telangana",
+    "partial_vaccinated": 32353077,
+    "totally_vaccinated": 31222225,
+    "Precaution Dose": 4323742,
+    "total": 67899044
+  },
+  {
+    "title": "Kerala",
+    "partial_vaccinated": 29116340,
+    "totally_vaccinated": 25160642,
+    "Precaution Dose": 2884198,
+    "total": 57161180
+  },
+  {
+    "title": "Assam",
+    "partial_vaccinated": 24714503,
+    "totally_vaccinated": 21929903,
+    "Precaution Dose": 2906700,
+    "total": 49551106
+  },
+  {
+    "title": "Punjab",
+    "partial_vaccinated": 24091550,
+    "totally_vaccinated": 20783963,
+    "Precaution Dose": 1462202,
+    "total": 46337715
+  },
+  {
+    "title": "Chhattisgarh",
+    "partial_vaccinated": 21148987,
+    "totally_vaccinated": 19893917,
+    "Precaution Dose": 5157549,
+    "total": 46200453
+  },
+  {
+    "title": "Haryana",
+    "partial_vaccinated": 23639527,
+    "totally_vaccinated": 19734745,
+    "Precaution Dose": 1688639,
+    "total": 45062911
+  },
+  {
+    "title": "Jharkhand",
+    "partial_vaccinated": 23757153,
+    "totally_vaccinated": 17205907,
+    "Precaution Dose": 1123874,
+    "total": 42086934
+  },
+  {
+    "title": "Delhi",
+    "partial_vaccinated": 18224484,
+    "totally_vaccinated": 15515498,
+    "Precaution Dose": 2570706,
+    "total": 36310688
+  },
+  {
+    "title": "Jammu and Kashmir",
+    "partial_vaccinated": 11360018,
+    "totally_vaccinated": 11706485,
+    "Precaution Dose": 1080669,
+    "total": 24147172
+  },
+  {
+    "title": "Uttarakhand",
+    "partial_vaccinated": 9093559,
+    "totally_vaccinated": 8653191,
+    "Precaution Dose": 1633204,
+    "total": 19379954
+  },
+  {
+    "title": "Himachal Pradesh",
+    "partial_vaccinated": 6620906,
+    "totally_vaccinated": 6273738,
+    "Precaution Dose": 1643757,
+    "total": 14538401
+  },
+  {
+    "title": "Tripura",
+    "partial_vaccinated": 2909316,
+    "totally_vaccinated": 2498634,
+    "Precaution Dose": 287881,
+    "total": 5695831
+  },
+  {
+    "title": "Manipur",
+    "partial_vaccinated": 1625887,
+    "totally_vaccinated": 1299038,
+    "Precaution Dose": 236537,
+    "total": 3161462
+  },
+  {
+    "title": "Goa",
+    "partial_vaccinated": 1438230,
+    "totally_vaccinated": 1291113,
+    "Precaution Dose": 122501,
+    "total": 2851844
+  },
+  {
+    "title": "Meghalaya",
+    "partial_vaccinated": 1438738,
+    "totally_vaccinated": 1076337,
+    "Precaution Dose": 71461,
+    "total": 2586536
+  },
+  {
+    "title": "Chandigarh",
+    "partial_vaccinated": 1183548,
+    "totally_vaccinated": 980822,
+    "Precaution Dose": 93121,
+    "total": 2257491
+  },
+  {
+    "title": "Puducherry",
+    "partial_vaccinated": 986879,
+    "totally_vaccinated": 801155,
+    "Precaution Dose": 225876,
+    "total": 2013910
+  },
+  {
+    "title": "Arunachal Pradesh",
+    "partial_vaccinated": 953844,
+    "totally_vaccinated": 805354,
+    "Precaution Dose": 83975,
+    "total": 1843173
+  },
+  {
+    "title": "Mizoram",
+    "partial_vaccinated": 890181,
+    "totally_vaccinated": 735441,
+    "Precaution Dose": 99413,
+    "total": 1725035
+  },
+  {
+    "title": "Nagaland",
+    "partial_vaccinated": 919580,
+    "totally_vaccinated": 736833,
+    "Precaution Dose": 53734,
+    "total": 1710147
+  },
+  {
+    "title": "Sikkim",
+    "partial_vaccinated": 590638,
+    "totally_vaccinated": 551420,
+    "Precaution Dose": 155315,
+    "total": 1297373
+  },
+  {
+    "title": "Andaman and Nicobar Islands",
+    "partial_vaccinated": 346365,
+    "totally_vaccinated": 350479,
+    "Precaution Dose": 211686,
+    "total": 908530
+  },
+  {
+    "title": "Dadra and Nagar Haveli",
+    "partial_vaccinated": 460955,
+    "totally_vaccinated": 352612,
+    "Precaution Dose": 66507,
+    "total": 880074
+  },
+  {
+    "title": "Daman and Diu",
+    "partial_vaccinated": 319532,
+    "totally_vaccinated": 277740,
+    "Precaution Dose": 66754,
+    "total": 664026
+  },
+  {
+    "title": "Ladakh",
+    "partial_vaccinated": 237854,
+    "totally_vaccinated": 202223,
+    "Precaution Dose": 103384,
+    "total": 543461
+  },
+  {
+    "title": "Lakshadweep",
+    "partial_vaccinated": 61660,
+    "totally_vaccinated": 59914,
+    "Precaution Dose": 11495,
+    "total": 133069
+  }
+]

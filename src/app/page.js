@@ -3,7 +3,8 @@ import { useState } from "react";
 import IndiaMap from "../components/IndiaMap";
 import VaccinationChart from "../components/VaccinationChart";
 import Legend from "../components/Legend";
-
+import VaccinationInsights from "../components/VaccinationInsights";
+import ComparativeAnalysis from "../components/ComparativeAnalysis";
 export default function Dashboard() {
   const [highlighted, setHighlighted] = useState(null);
 
@@ -20,45 +21,67 @@ export default function Dashboard() {
 
       <div className="relative z-10">
         {/* Header */}
-        <div className="text-center pt-12 pb-8 px-4">
-          <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-blue-400 via-green-400 to-cyan-400 bg-clip-text text-transparent mb-6">
-            India Vaccination Tracker
+        <div className="text-center pt-8 pb-6 px-4">
+          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 via-green-400 to-cyan-400 bg-clip-text text-transparent mb-4">
+            India Vaccination Dashboard
           </h1>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            Real-time visualization of COVID-19 vaccination progress across all Indian states and union territories
+          <p className="text-lg text-gray-300 max-w-3xl mx-auto">
+            Interactive visualization of COVID-19 vaccination coverage across Indian states
           </p>
         </div>
 
         {/* Main Content */}
-        <div className="max-w-7xl mx-auto px-4 pb-12">
-          {/* Map Section */}
-          <div className="bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl p-8 mb-8 border border-white/20">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-white mb-3">Interactive State Map</h2>
-              <p className="text-gray-300 text-lg">
-                Hover over any state to view vaccination details and highlight corresponding data
-              </p>
+        <div className="max-w-[95vw] mx-auto px-2 pb-8">
+          {/* Top Section: Map with Side Panels - Full Width */}
+          <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 mb-6">
+            {/* Left Insights Panel - 2 columns - STICKY */}
+            <div className="xl:col-span-2 space-y-4">
+              <div className="sticky top-4 space-y-4">
+                <VaccinationInsights highlighted={highlighted} />
+              </div>
             </div>
-            
-            <div className="flex justify-center mb-6">
-              <IndiaMap highlighted={highlighted} setHighlighted={setHighlighted} />
+
+            {/* Center Map - 8 columns (much wider) */}
+            <div className="xl:col-span-8">
+              <div className="bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl p-4 border border-white/20">
+                <div className="text-center mb-4">
+                  <h2 className="text-2xl font-bold text-white mb-2">Interactive State Map</h2>
+                  <p className="text-gray-300 text-sm">
+                    Hover over any state to view detailed vaccination data
+                  </p>
+                </div>
+                
+                {/* Map Container - Full width with proper aspect ratio */}
+                <div className="flex justify-center items-center min-h-[600px]">
+                  <div className="w-full max-w-5xl"> {/* Increased max width */}
+                    <IndiaMap highlighted={highlighted} setHighlighted={setHighlighted} />
+                  </div>
+                </div>
+                
+                <div className="flex justify-center mt-4">
+                  <Legend />
+                </div>
+              </div>
             </div>
-            
-            <div className="flex justify-center mt-8">
-              <Legend />
+
+            {/* Right Performance Panel - 2 columns - STICKY */}
+            <div className="xl:col-span-2">
+              <div className="sticky top-4">
+                <ComparativeAnalysis highlighted={highlighted} />
+              </div>
             </div>
           </div>
 
-          {/* Chart Section */}
-          <div className="bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl p-8 border border-white/20">
+          {/* Bottom Section: Chart */}
+          <div className="bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl p-6 border border-white/20">
             <VaccinationChart highlighted={highlighted} />
           </div>
         </div>
 
         {/* Footer */}
-        <footer className="text-center py-8 border-t border-white/10">
-          <p className="text-gray-400">
-            Official Vaccination Data • Built with Next.js & Recharts
+        <footer className="text-center py-6 border-t border-white/10">
+          <p className="text-gray-400 text-sm">
+            India COVID-19 Vaccination Dashboard • Data sourced from official records
           </p>
         </footer>
       </div>

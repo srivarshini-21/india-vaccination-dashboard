@@ -138,12 +138,13 @@ export default function IndiaMap({ highlighted, setHighlighted }) {
   };
 
   return (
-    <div className="relative">
+    <div className="relative w-full flex justify-center">
       <div
-        className="w-full max-w-4xl mx-auto transform hover:scale-105 transition-transform duration-300"
+        className="w-full max-w-4xl" // Increased max width
         dangerouslySetInnerHTML={{ __html: updatedSvg }}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
+        style={{ minHeight: '400px' }}
       />
 
       {/* Enhanced Tooltip with Pie Chart */}

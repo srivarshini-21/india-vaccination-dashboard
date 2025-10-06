@@ -37,38 +37,38 @@ export default function VaccinationChart({ highlighted }) {
 
   // Tooltip component
   const CustomTooltip = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
-      const d = payload[0].payload;
-      return (
-        <div className="bg-slate-800/95 backdrop-blur-md p-3 sm:p-4 rounded-xl shadow-2xl border border-white/20 w-[85vw] sm:w-72 md:w-80 lg:w-96 max-w-full text-center">
-          <p className="font-bold text-white mb-2 sm:mb-3 text-base sm:text-lg truncate">
-            {label}
-          </p>
-          <div className="space-y-2 text-xs sm:text-sm">
-            {[
-              { label: "Total", value: d.value, color: "blue" },
-              { label: "Fully", value: d.total, color: "green" },
-              { label: "Partial", value: d.partial, color: "yellow" },
-              { label: "Precaution", value: d.precaution, color: "purple" },
-            ].map(({ label, value, color }) => (
-              <div
-                key={label}
-                className={`flex justify-between items-center bg-${color}-500/20 px-3 py-2 rounded-lg border border-${color}-400/40`}
-              >
-                <span className={`text-${color}-300 font-semibold`}>
-                  {label}:
-                </span>
-                <span className="font-bold text-white">
-                  {new Intl.NumberFormat().format(value)}
-                </span>
-              </div>
-            ))}
-          </div>
+  if (active && payload && payload.length) {
+    const d = payload[0].payload;
+    return (
+      <div className="max-w-[calc(100vw-32px)] sm:max-w-sm w-full mx-auto p-3 sm:p-4 bg-slate-800/95 backdrop-blur-md rounded-xl shadow-2xl border border-white/20 text-center break-words overflow-auto">
+        <p className="font-bold text-white mb-2 sm:mb-3 text-base sm:text-lg truncate">
+          {label}
+        </p>
+        <div className="space-y-2 text-xs sm:text-sm">
+          {[
+            { label: "Total", value: d.value, color: "blue" },
+            { label: "Fully", value: d.total, color: "green" },
+            { label: "Partial", value: d.partial, color: "yellow" },
+            { label: "Precaution", value: d.precaution, color: "purple" },
+          ].map(({ label, value, color }) => (
+            <div
+              key={label}
+              className={`flex justify-between items-center bg-${color}-500/20 px-3 py-2 rounded-lg border border-${color}-400/40`}
+            >
+              <span className={`text-${color}-300 font-semibold`}>
+                {label}:
+              </span>
+              <span className="font-bold text-white">
+                {new Intl.NumberFormat().format(value)}
+              </span>
+            </div>
+          ))}
         </div>
-      );
-    }
-    return null;
-  };
+      </div>
+    );
+  }
+  return null;
+};
 
   return (
     <div className="w-full px-2 sm:px-4 md:px-6 lg:px-8">

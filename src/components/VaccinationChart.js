@@ -36,33 +36,57 @@ export default function VaccinationChart({ highlighted }) {
     .slice(0, 15);
 
   // Tooltip component
-  const CustomTooltip = ({ active, payload, label }) => {
+const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     const d = payload[0].payload;
+
+    const colorClasses = {
+      blue: { bg: 'bg-blue-500/20', border: 'border-blue-400/40', text: 'text-blue-300' },
+      green: { bg: 'bg-green-500/20', border: 'border-green-400/40', text: 'text-green-300' },
+      yellow: { bg: 'bg-yellow-500/20', border: 'border-yellow-400/40', text: 'text-yellow-300' },
+      purple: { bg: 'bg-purple-500/20', border: 'border-purple-400/40', text: 'text-purple-300' },
+    };
+
+    const dataPoints = [
+      { label: "Tot", value: d.value, colorKey: "blue" },
+      { label: "Full", value: d.total, colorKey: "green" },
+      { label: "Part", value: d.partial, colorKey: "yellow" },
+      { label: "Pre", value: d.precaution, colorKey: "purple" },
+    ];
+
     return (
-      <div className="max-w-[calc(100vw-32px)] sm:max-w-sm w-full mx-auto p-3 sm:p-4 bg-slate-800/95 backdrop-blur-md rounded-xl shadow-2xl border border-white/20 text-center break-words overflow-auto">
-        <p className="font-bold text-white mb-2 sm:mb-3 text-base sm:text-lg truncate">
+      <div
+        className="p-2 bg-slate-800/95 backdrop-blur-md rounded shadow-xl border border-white/20"
+        style={{
+          width: "auto",
+          maxWidth: "90vw",        // never overflow small screens
+          minWidth: "100px",       // always readable on large screens
+        }}
+      >
+        <p className="font-bold text-white mb-1 text-[10px] sm:text-[12px] break-words">
           {label}
         </p>
-        <div className="space-y-2 text-xs sm:text-sm">
-          {[
-            { label: "Total", value: d.value, color: "blue" },
-            { label: "Fully", value: d.total, color: "green" },
-            { label: "Partial", value: d.partial, color: "yellow" },
-            { label: "Precaution", value: d.precaution, color: "purple" },
-          ].map(({ label, value, color }) => (
-            <div
-              key={label}
-              className={`flex justify-between items-center bg-${color}-500/20 px-3 py-2 rounded-lg border border-${color}-400/40`}
-            >
-              <span className={`text-${color}-300 font-semibold`}>
-                {label}:
-              </span>
-              <span className="font-bold text-white">
-                {new Intl.NumberFormat().format(value)}
-              </span>
-            </div>
-          ))}
+        <div className="space-y-0.5 text-[9px] sm:text-[10px]">
+          {dataPoints.map(({ label, value, colorKey }) => {
+            const classes = colorClasses[colorKey];
+            return (
+              <div
+                key={label}
+                className={`flex justify-between items-center ${classes.bg} px-1 py-0.5 rounded border ${classes.border}`}
+              >
+                <span className={`${classes.text} font-semibold break-words text-[8px] sm:text-[10px]`}>
+                  {label}:
+                </span>
+                <span className="font-bold text-white text-[8px] sm:text-[10px]">
+                  {value >= 1_000_000
+                    ? `${(value / 1_000_000).toFixed(1)}M`
+                    : value >= 1_000
+                    ? `${(value / 1_000).toFixed(0)}K`
+                    : value}
+                </span>
+              </div>
+            );
+          })}
         </div>
       </div>
     );

@@ -55,12 +55,13 @@ export default function Dashboard() {
                   </p>
                 </div>
 
-                <div className="flex justify-center items-center min-h-[300px] sm:min-h-[500px] xl:min-h-[600px]">
-                  <div className="w-full max-w-3xl sm:max-w-4xl xl:max-w-5xl">
+                <div className="flex justify-center items-center min-h-[400px] sm:min-h-[500px] md:min-h-[600px] px-2">
+                <div className="w-full max-w-5xl mx-auto flex justify-center">
+                  <div className="w-full sm:w-[95%] md:w-[90%] lg:w-full">
                     <IndiaMap highlighted={highlighted} setHighlighted={setHighlighted} />
                   </div>
                 </div>
-
+              </div>
                 <div className="flex justify-center mt-4 overflow-x-auto">
                   <Legend />
                 </div>

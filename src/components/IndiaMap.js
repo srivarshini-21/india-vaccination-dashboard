@@ -14,12 +14,12 @@ export default function IndiaMap({ highlighted, setHighlighted }) {
     stateName: "",
     data: null,
   });
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobilePopupOpen, setIsMobilePopupOpen] = useState(false);
 
   const mapRef = useRef(null);
-  const tooltipRef = useRef(null);
 
-  // Detect mobile
+  // Detect mobile for resizing layout (optional)
+  const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
@@ -34,7 +34,7 @@ export default function IndiaMap({ highlighted, setHighlighted }) {
       .then((svg) => setSvgContent(svg));
   }, []);
 
-  // Click outside to close tooltip
+  // Close selection when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (mapRef.current && !mapRef.current.contains(event.target)) {
@@ -48,11 +48,24 @@ export default function IndiaMap({ highlighted, setHighlighted }) {
           stateName: "",
           data: null,
         });
+        setIsMobilePopupOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [setHighlighted]);
+
+  if (!svgContent)
+    return (
+      <div className="flex items-center justify-center h-48 sm:h-64 md:h-80 lg:h-96">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 border-b-2 border-blue-600 mx-auto mb-2 sm:mb-4"></div>
+          <p className="text-gray-300 text-xs sm:text-sm md:text-base">
+            Loading map...
+          </p>
+        </div>
+      </div>
+    );
 
   // Color scale
   const values = Object.values(vaccinationData).map((d) => d.overall);
@@ -69,31 +82,15 @@ export default function IndiaMap({ highlighted, setHighlighted }) {
 
   // Desktop hover tooltip
   const handleMouseMove = (e) => {
-    if (isMobile || selectedState) return;
-
-    const stateId = e.target.id;
-    if (stateId && vaccinationData[stateId]) {
-      const stateData = vaccinationData[stateId];
-      setHighlighted(stateId);
-
+    if (e.target.id && vaccinationData[e.target.id] && !selectedState && window.innerWidth >= 768) {
+      const stateData = vaccinationData[e.target.id];
+      setHighlighted(e.target.id);
       const rect = e.currentTarget.getBoundingClientRect();
-      let x = e.clientX - rect.left + 10;
-      let y = e.clientY - rect.top - 10;
-
-      // Adjust for overflow
-      if (tooltipRef.current) {
-        const { offsetWidth: ttWidth, offsetHeight: ttHeight } = tooltipRef.current;
-        if (x + ttWidth > window.innerWidth - 10) x = window.innerWidth - ttWidth - 10;
-        if (y + ttHeight > window.innerHeight - 10) y = window.innerHeight - ttHeight - 10;
-        if (x < 10) x = 10;
-        if (y < 10) y = 10;
-      }
-
       setTooltip({
         visible: true,
-        x,
-        y,
-        stateId,
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
+        stateId: e.target.id,
         stateName: stateData.name,
         data: stateData,
       });
@@ -101,7 +98,7 @@ export default function IndiaMap({ highlighted, setHighlighted }) {
   };
 
   const handleMouseLeave = () => {
-    if (!selectedState) {
+    if (!selectedState && window.innerWidth >= 768) {
       setHighlighted(null);
       setTooltip({
         visible: false,
@@ -117,33 +114,39 @@ export default function IndiaMap({ highlighted, setHighlighted }) {
   // Handle click (desktop & mobile)
   const handleStateClick = (stateId) => {
     const stateData = vaccinationData[stateId];
-    if (selectedState === stateId) {
-      // Close popup
-      setSelectedState(null);
-      setHighlighted(null);
-      setTooltip({ visible: false, x: 0, y: 0, stateId: null, stateName: "", data: null });
+    if (window.innerWidth < 768) {
+      setTooltip({
+        visible: true,
+        x: 0,
+        y: 0,
+        stateId,
+        stateName: stateData.name,
+        data: stateData,
+      });
+      setIsMobilePopupOpen(true);
     } else {
-      setSelectedState(stateId);
-      setHighlighted(stateId);
-
-      if (isMobile) {
-        // Centered popup for mobile
+      if (selectedState === stateId) {
+        setSelectedState(null);
+        setHighlighted(null);
+        setTooltip({
+          visible: false,
+          x: 0,
+          y: 0,
+          stateId: null,
+          stateName: "",
+          data: null,
+        });
+      } else {
+        setSelectedState(stateId);
+        setHighlighted(stateId);
         setTooltip({
           visible: true,
-          x: window.innerWidth / 2,
-          y: window.innerHeight / 2,
+          x: 0,
+          y: 0,
           stateId,
           stateName: stateData.name,
           data: stateData,
         });
-      } else {
-        // Keep tooltip at current mouse position for desktop
-        setTooltip((prev) => ({
-          ...prev,
-          stateId,
-          stateName: stateData.name,
-          data: stateData,
-        }));
       }
     }
   };
@@ -154,9 +157,7 @@ export default function IndiaMap({ highlighted, setHighlighted }) {
     const isSelected = selectedState === id;
     const isHighlighted = highlighted === id;
     const fill = getColor(d.overall);
-    let stroke = "#ffffff",
-      strokeWidth = "1",
-      filter = "none";
+    let stroke, strokeWidth, filter;
 
     if (isSelected) {
       stroke = "#1e40af";
@@ -166,6 +167,10 @@ export default function IndiaMap({ highlighted, setHighlighted }) {
       stroke = "#1e40af";
       strokeWidth = "2";
       filter = "url(#glow)";
+    } else {
+      stroke = "#ffffff";
+      strokeWidth = "1";
+      filter = "none";
     }
 
     updatedSvg = updatedSvg.replace(
@@ -174,14 +179,18 @@ export default function IndiaMap({ highlighted, setHighlighted }) {
     );
   });
 
-  // Add glow filter if missing
+  // Add glow filter
   if (!updatedSvg.includes("filter=")) {
     updatedSvg = updatedSvg.replace(
       "</defs>",
       `<filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
         <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-        <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
-      </filter></defs>`
+        <feMerge> 
+          <feMergeNode in="coloredBlur"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+      </defs>`
     );
   }
 
@@ -192,10 +201,11 @@ export default function IndiaMap({ highlighted, setHighlighted }) {
       .replace(/\sheight="[^"]*"/, "")
       .replace(
         "<svg",
-        `<svg class="w-full h-auto max-w-full" preserveAspectRatio="xMidYMid meet"`
+        '<svg class="w-full h-auto max-w-full" preserveAspectRatio="xMidYMid meet"'
       );
   }
 
+  // Pie chart
   const PIE_COLORS = ["#22c55e", "#facc15", "#a855f7"];
   const StatePieChart = ({ data }) => {
     const pieData = [
@@ -219,12 +229,12 @@ export default function IndiaMap({ highlighted, setHighlighted }) {
               dataKey="value"
             >
               {pieData.map((entry, index) => (
-                <Cell key={index} fill={PIE_COLORS[index]} stroke="#1e293b" strokeWidth={2} />
+                <Cell key={`cell-${index}`} fill={PIE_COLORS[index]} stroke="#1e293b" strokeWidth={2} />
               ))}
             </Pie>
           </PieChart>
         </ResponsiveContainer>
-        <div className="text-center text-[10px] text-gray-400 mt-1">
+        <div className="text-center text-[10px] sm:text-xs text-gray-400 mt-1">
           Total: {new Intl.NumberFormat().format(total)}
         </div>
       </div>
@@ -239,74 +249,79 @@ export default function IndiaMap({ highlighted, setHighlighted }) {
         dangerouslySetInnerHTML={{ __html: updatedSvg }}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        onClick={(e) => e.target.id && vaccinationData[e.target.id] && handleStateClick(e.target.id)}
+        onClick={(e) => {
+          if (e.target.id && vaccinationData[e.target.id]) handleStateClick(e.target.id);
+        }}
       />
 
       {/* Desktop Hover Tooltip */}
-      {!selectedState && tooltip.visible && tooltip.data && !isMobile && (
-        <div
-          ref={tooltipRef}
-          className="absolute bg-slate-800/95 backdrop-blur-md shadow-2xl rounded-lg p-2 sm:p-4 w-72 z-50 border border-white/20 animate-fade-in pointer-events-none"
-          style={{ top: tooltip.y, left: tooltip.x }}
-        >
-          <h3 className="font-bold text-white text-sm mb-1">{tooltip.stateName}</h3>
-          <StatePieChart data={tooltip.data} />
-          <div className="grid grid-cols-2 gap-2 mt-2 text-[10px] sm:text-xs text-gray-200">
-            {[
-              { label: "Total", value: tooltip.data.overall, color: "blue" },
-              { label: "Fully", value: tooltip.data.total, color: "green" },
-              { label: "Partial", value: tooltip.data.partial, color: "yellow" },
-              { label: "Precaution", value: tooltip.data.precaution, color: "purple" },
-            ].map(({ label, value, color }) => (
-              <div key={label} className={`bg-${color}-500/20 p-2 rounded-lg border border-${color}-400/30`}>
-                <div className={`text-${color}-300 font-semibold text-[10px] uppercase`}>{label}</div>
-                <div className="text-white font-bold text-xs mt-1">{new Intl.NumberFormat().format(value)}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      {!selectedState && tooltip.visible && tooltip.data && window.innerWidth >= 768 && (() => {
+        const tooltipEl = mapRef.current;
+        const tooltipWidth = 320;
+        const tooltipHeight = 220;
 
-      {/* Selected State Card */}
-      {selectedState && tooltip.data && tooltip.visible && (
-        <div
-          className="absolute bg-slate-800/95 backdrop-blur-md shadow-2xl rounded-lg p-3 sm:p-5 w-[90vw] sm:w-72 md:w-80 z-50 border border-white/20 animate-fade-in"
-          style={{
-            top: isMobile ? "50%" : "2rem",
-            left: isMobile ? "50%" : "auto",
-            transform: isMobile ? "translate(-50%, -50%)" : "none",
-          }}
-        >
-          <div className="flex justify-between items-start mb-2">
-            <h3 className="font-bold text-white text-sm sm:text-lg">{tooltip.stateName}</h3>
-            <button
-              onClick={() => {
-                setSelectedState(null);
-                setHighlighted(null);
-                setTooltip({ visible: false, x: 0, y: 0, stateId: null, stateName: "", data: null });
-              }}
-              className="text-gray-400 hover:text-white text-lg"
-            >
-              ×
-            </button>
-          </div>
-          <StatePieChart data={tooltip.data} />
-          <div className="grid grid-cols-2 gap-2 sm:gap-3 text-[10px] sm:text-xs md:text-sm mt-2">
-            {[
-              { label: "Total", value: tooltip.data.overall, color: "blue" },
-              { label: "Fully", value: tooltip.data.total, color: "green" },
-              { label: "Partial", value: tooltip.data.partial, color: "yellow" },
-              { label: "Precaution", value: tooltip.data.precaution, color: "purple" },
-            ].map(({ label, value, color }) => (
-              <div key={label} className={`bg-${color}-500/20 p-2 rounded-lg border border-${color}-400/30`}>
-                <div className={`text-${color}-300 font-semibold text-[10px] sm:text-xs uppercase`}>{label}</div>
-                <div className="text-white font-bold text-xs sm:text-base md:text-lg mt-1">
-                  {new Intl.NumberFormat().format(value)}
+        let top = tooltip.y - tooltipHeight;
+        let left = tooltip.x + 10;
+
+        if (top < 10) top = 10;
+        if (top + tooltipHeight > window.innerHeight - 10) top = window.innerHeight - tooltipHeight - 10;
+        if (left < 10) left = 10;
+        if (left + tooltipWidth > window.innerWidth - 10) left = window.innerWidth - tooltipWidth - 10;
+
+        return (
+          <div
+            className="absolute bg-slate-800/95 backdrop-blur-md shadow-2xl rounded-lg p-3 sm:p-5 w-72 md:w-80 lg:w-96 z-50 border border-white/20 animate-fade-in"
+            style={{ top, left }}
+          >
+            <h3 className="font-bold text-white text-sm mb-1">{tooltip.stateName}</h3>
+            <StatePieChart data={tooltip.data} />
+            <div className="grid grid-cols-2 gap-2 mt-2 text-[10px] sm:text-xs text-gray-200">
+              {[
+                { label: "Total", value: tooltip.data.overall, color: "blue" },
+                { label: "Fully", value: tooltip.data.total, color: "green" },
+                { label: "Partial", value: tooltip.data.partial, color: "yellow" },
+                { label: "Precaution", value: tooltip.data.precaution, color: "purple" },
+              ].map(({ label, value, color }) => (
+                <div key={label} className={`bg-${color}-500/20 p-2 rounded-lg border border-${color}-400/30`}>
+                  <div className={`text-${color}-300 font-semibold text-[10px] uppercase`}>{label}</div>
+                  <div className="text-white font-bold text-xs mt-1">{new Intl.NumberFormat().format(value)}</div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        );
+      })()}
+
+      {/* Mobile Centered Popup */}
+      {isMobilePopupOpen && tooltip.data && window.innerWidth < 768 && (
+        <>
+          <div className="fixed inset-0 bg-black/40 z-40" />
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-slate-900/95 backdrop-blur-md rounded-3xl p-5 w-11/12 max-w-sm z-50 animate-fade-in border border-white/20">
+            <div className="flex justify-between items-center mb-2">
+              <h3 className="text-white font-bold text-base">{tooltip.stateName}</h3>
+              <button
+                onClick={() => setIsMobilePopupOpen(false)}
+                className="text-gray-400 hover:text-white text-lg"
+              >
+                ×
+              </button>
+            </div>
+            <StatePieChart data={tooltip.data} />
+            <div className="grid grid-cols-2 gap-2 mt-2 text-[10px] text-gray-200">
+              {[
+                { label: "Total", value: tooltip.data.overall, color: "blue" },
+                { label: "Fully", value: tooltip.data.total, color: "green" },
+                { label: "Partial", value: tooltip.data.partial, color: "yellow" },
+                { label: "Precaution", value: tooltip.data.precaution, color: "purple" },
+              ].map(({ label, value, color }) => (
+                <div key={label} className={`bg-${color}-500/20 p-2 rounded-lg border border-${color}-400/30`}>
+                  <div className={`text-${color}-300 font-semibold text-[10px] uppercase`}>{label}</div>
+                  <div className="text-white font-bold text-xs mt-1">{new Intl.NumberFormat().format(value)}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
       )}
     </div>
   );

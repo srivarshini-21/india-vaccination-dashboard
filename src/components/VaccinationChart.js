@@ -196,15 +196,11 @@ const CustomTooltip = ({ active, payload, label }) => {
                     return (
                       <Cell
                         key={entry.id}
-                        fill={
-                          isHighlighted
-                            ? "url(#highlightedGradient)"
-                            : "url(#mainGradient)"
-                        }
+                        fill={isHighlighted ? "url(#highlightedGradient)" : "url(#mainGradient)"}
                         stroke={isHighlighted ? "#10b981" : "#059669"}
                         strokeWidth={isHighlighted ? 2 : 1}
-                        opacity={highlighted && !isHighlighted ? 0.3 : 1}
-                        className="transition-all duration-300 hover:brightness-110"
+                        opacity={1} // Keep all bars fully visible
+                        className={`transition-all duration-300 ${isHighlighted ? "filter drop-shadow-lg" : ""}`}
                       />
                     );
                   })}
